@@ -1,0 +1,39 @@
+[Legend]
+Byte - 1 byte - Unsigned
+Int16 - 2 bytes - Signed
+Int32 - 4 bytes - Signed
+Single - 4 bytes - Single precision float
+Color - 3 bytes - Three bytes defining RGB (in that order)
+Mode - 1 byte - How to parse a String - Literal(Direct ASCII Text), Formattable (See .Net String.Format),
+Localization Key (Terraria translates this depending on the chosen language, example "Net.NameTooLong" is mapped to 
+"Name is too long." in en-US and is mapped to "Le nom est trop long." in fr-FR)
+String - n bytes - see [Strings]
+
+Payload Table Example
+Offset | Type   | Description
+-----------------------------
+   0   | String |   Reason
+
+[Strings]
+Strings are read and written right after a length 7 bit encoded 32 bit integer (essentially 1 byte compressed).
+When receiving them, parse the integer then treat the amount of bytes specified, and when sending them,
+write the Mode then write the string.
+
+https://docs.microsoft.com/en-us/dotnet/api/System.IO.BinaryWriter.Write7BitEncodedInt?view=netframework-4.7.2
+https://stackoverflow.com/questions/1550560/encoding-an-integer-in-7-bit-format-of-c-sharp-binaryreader-readstring
+
+$01 - Connect Request
+Request a connection using the name of the game and the protocol version
+0 | String | Version
+$02 - Disconnect
+Disconnects the player with the provided reason
+0 | String | Reason
+$03 - Connection Approved
+0 | Byte   | Player Slot
+$04 - Player Appearance
+0 | Byte   | Player Slot
+
+Check terraria client for details, I don't want to write this yet without a better understanding of certain bytes
+$05 - Populate Inventory Slot
+1 | Byte   | Player Slot
+2 | Byte   | Name Prefix
